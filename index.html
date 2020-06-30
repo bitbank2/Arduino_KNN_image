@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta charset="utf-8" />
+</head>
+
+<body>
+	<div id="container">
+		<div id="top-bar">
+			<button id="connectButton">▶</button>
+		</div>
+		<div id="p5-sketch"></div>
+		<div id="console">
+			<pre id="serialMonitor"></pre>
+		</div>
+	</div>
+
+	<dialog id="dialog">
+		<h1>Arduino Machine Learning</h1>
+		<hr>
+		<h2>OV767x camera capture demo</h2>
+		<p> This page communicates with a Arduino Nano 33 BLE Sense board over USB.<p>
+
+			<h3>Instructions</h3>
+			<ul>
+				<li> First upload sketch to your board using <a href="https://create.arduino.cc/editor/dpajak/f8815d3f-de9c-412f-8dda-f919efba70d3/preview" target="_NEW">Arduino Create</a></li>
+				<li> Connect your browser to the board using the button below</li>
+				<li> Capture some images of some objects</li>
+				<li> Paste the Arduino code generated into the CameraKNN sketch</li>
+				<li> Compile and upload - your Arduino can now recognise the objects!
+			</ul>
+			<br>
+			<div>
+				<button id="connectButton2">Connect to Arduino</button>
+				<button id="cancel">Cancel</button>
+			</div>
+		</dialog>
+
+		<script src="arduino-events.js"></script>
+		<script src="sketch.js"></script>
+
+	</body>
+
+	</html>
