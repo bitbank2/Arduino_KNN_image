@@ -5,6 +5,8 @@ An Arduino sketch captures image examples which can be imported to the KNN class
 
 [Full write up here](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/). 
 
+![capture](https://raw.githubusercontent.com/8bitkick/Arduino_KNN_image/master/images/capture.gif)
+
 
 ## Prerequisites 
   
@@ -28,13 +30,9 @@ An Arduino sketch captures image examples which can be imported to the KNN class
 
   * Connect the Chrome browser to the Arduino board by hitting the `Connect to Arduino` button
   
-  * The browser will pop-up with another window to confirm - select the Arduino Nano BLE Sense and press `Connect`
-  
-  ![connect](https://raw.githubusercontent.com/8bitkick/Arduino_KNN_image/master/images/connectSerial.gif)
+  * The browser will [pop-up with another window to confirm](https://raw.githubusercontent.com/8bitkick/Arduino_KNN_image/master/images/connectSerial.gif) - select the Arduino Nano BLE Sense and press `Connect`
   
 ## Capture some example images
-
-![capture](https://raw.githubusercontent.com/8bitkick/Arduino_KNN_image/master/images/capture.gif)
 
   * You should see a pixelated view of what your camera is now seeing
   
