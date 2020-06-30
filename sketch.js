@@ -46,11 +46,11 @@ function addPixel(r,g,b,c){
 //console.log(cam_width, cam_height)
 inputBuffer.push([r,g,b]);
 }
-
+/*
 function addPixel(p){
 // grayscale
 inputBuffer.push([p,p,p]);
-}
+}*/
 
 function log(m){
   console.log(m);
@@ -89,7 +89,7 @@ function draw() {
   currentImage.forEach((p) => {
       noStroke();
     fill(color(p[0],p[1],p[2]));
-    rect(12+px*sizex,32+py*sizey,sizex,sizey);
+    rect(12+px*sizex,32+py*sizey,sizex-1,sizey-1);
    px++;
    if (px>=cam_width) {px=0;py++;}
   })
