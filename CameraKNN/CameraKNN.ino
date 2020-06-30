@@ -70,14 +70,35 @@ void loop() {
   uint16_t col_min[3] = {255 * 255};
 
   uint16_t rgb_frame[frame_height][frame_width][3] = { 0 };
+  
+  uint16_t *u16Cam = (uint16_t *)camdata;
+  uint16_t rSum, gSum, bSum;
+ 
+  for (uint16_t y = 0; y <frame_height; y++) {
+     for (uint16_t x = 0; x < frame_width; x++) {
+        rSum = gSum = bSum = 0; // start the counters for this block
+        for (int j=0; j<BLOCK_SIZE; j++) {
+           uint16_t *pPixels = &u16Cam[(j * WIDTH) + (y * WIDTH * BLOCK_SIZE) + (x * BLOCK_SIZE)];
+           for (int i=0; i<BLOCK_SIZE; i++) {
+              uint16_t pixel = __builtin_bswap16(*pPixels++);
+              rSum += ((pixel & 0xf800) >> 11);
+              gSum += ((pixel & 0x07e0) >> 5);
+              bSum += (pixel & 0x1f);
+           } // for i
+        } // for j
+        rgb_frame[y][x][0] = rSum;
+        rgb_frame[y][x][1] = gSum;
+        rgb_frame[y][x][2] = bSum;
+     } // for x
+  } // for y
 
+#ifdef OLD_WAY
   for (size_t i = 0; i < bytesPerFrame; i += 2) {
 
     // Convert from RGB565 to 24-bit RGB
     const uint8_t high = camdata[i];
     const uint8_t low  = camdata[i + 1];
     const uint16_t pixel = (high << 8) | low;
-
     const uint8_t red =   (pixel & 0b1111100000000000) >> 11;
     const uint8_t green = (pixel & 0b0000011111100000) >> 6;
     const uint8_t blue =  (pixel & 0b0000000000011111);
@@ -94,6 +115,7 @@ void loop() {
     rgb_frame[block_y][block_x][2] += blue;
 
   }
+#endif // OLD_WAY
 
   // Get normalization range (start at 1 because issues with lhs of image)
   for (int y = 0; y < HEIGHT / BLOCK_SIZE; y++) {
