@@ -1,18 +1,29 @@
-# Arduino_KNN_p5js
-Companion web visualization for the Arduino_KNN [ColorClassifier.ino](https://github.com/arduino-libraries/Arduino_KNN/tree/master/examples/ColorClassifier) sketch
+# Arduino_KNN_image
+Simple machine vision using KNN on an [Arduino Nano BLE sense](https://store.arduino.cc/usa/nano-33-ble-sense) and a OV767x low-cost VGA camera module.
 
-The p5.js sketch is designed to connect to [Arduino Nano BLE sense](https://store.arduino.cc/usa/nano-33-ble-sense) and visualize the function of the machine learning algorithm running on the arduino board. I made this to create diagrams and videos to explain the function of KNN.
+An Arduino sketch captures image examples data which can be imported to the KNN classifier. A web page that connects to the Arduino using web serial displays a visualization of this using p5js and auto generates Arduino code of the example image data array to paste back into your sketch.
 
-  The Arduinio sketch learns from examples then classifies objects using a color sensor. [Full write up here](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/). 
+[Full write up here](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/). 
 
 
-## Usage 
+## Prerequisties 
+  
+  * Install the Arduino KNN library following these [instructions](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/)
 
-  Program your board with the [ColorClassifier sketch](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/). 
+  * Connect the Arduino and Camera and install the library following these [instructions](https://blog.arduino.cc/2020/06/24/machine-vision-with-low-cost-camera-modules/). 
 
-  Load index.html. The sketch currently relies on Web Serial so is Chrome only at this time.
+  
+## Usage
+  
+  * Download this project and unzip it
+  
+  * Install and open the [Arduino IDE](https://www.arduino.cc/en/main/software) or [Arduino Create](https://create.arduino.cc/projecthub/Arduino_Genuino/getting-started-with-arduino-web-editor-on-various-platforms-4b3e4a?f=1)
 
-  Teach the Arduino by putting an example of each object close to the color sensor.
+  * In the Arduino IDE open the [CameraKNN.ino](https://blog.arduino.cc/2020/06/18/simple-machine-learning-with-arduino-knn/) project file, compile and upload to your board
+
+  * In Google Chrome load index.html in the project folder. The sketch currently relies on Web Serial so is Chrome only at this time.
+
+  * Connect the web page to the
   
   After this the Arduino will guess the name of objects it is shown based on how similar
   the color is to the examples it has seen using the k-NN algorithm. 
