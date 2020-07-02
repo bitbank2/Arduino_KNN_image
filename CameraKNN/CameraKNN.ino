@@ -42,7 +42,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial);
 
-  if (!Camera.begin(QVGA, RGB565, 1)) {
+  if (!Camera.begin(QVGA, RGB565, 5)) {
     Serial.println("Failed to initialize camera!");
     while (1);
   }
@@ -72,27 +72,41 @@ void loop() {
   uint16_t rgb_frame[frame_height][frame_width][3] = { 0 };
   
   uint16_t *u16Cam = (uint16_t *)camdata;
-  uint16_t rSum, gSum, bSum;
- 
+  uint32_t rSum, gSum, bSum;
+
+timer = micros();
+
+#ifndef NEW_WAY
+//
+// This code is about 9x faster than the "old" loop below
+// due to avoiding use of integer divide and keeping the partial sums
+// in a register variable instead of the read/modify/write required
+// to add to an array element
+//
   for (uint16_t y = 0; y <frame_height; y++) {
      for (uint16_t x = 0; x < frame_width; x++) {
         rSum = gSum = bSum = 0; // start the counters for this block
         for (int j=0; j<BLOCK_SIZE; j++) {
-           uint16_t *pPixels = &u16Cam[(j * WIDTH) + (y * WIDTH * BLOCK_SIZE) + (x * BLOCK_SIZE)];
-           for (int i=0; i<BLOCK_SIZE; i++) {
-              uint16_t pixel = __builtin_bswap16(*pPixels++);
-              rSum += ((pixel & 0xf800) >> 11);
-              gSum += ((pixel & 0x07e0) >> 5);
-              bSum += (pixel & 0x1f);
+           uint32_t *pPixels = (uint32_t *)&u16Cam[(j * WIDTH) + (y * WIDTH * BLOCK_SIZE) + (x * BLOCK_SIZE)];
+           for (int i=0; i<BLOCK_SIZE; i+=2) { // work on 2 pixels at a time
+              uint16_t pixel = __builtin_bswap32(*pPixels++);
+              // Use the lower and upper 16-bits to collect independent sums for each pixel pair
+              rSum += ((pixel & 0xf800f800) >> 11);
+              gSum += ((pixel & 0x07e007e0) >> 6); // make RGB565 into RGB555
+              bSum += (pixel & 0x001f001f);
            } // for i
         } // for j
+        // Combine the upper and lower halves
+        rSum = (rSum + (rSum >> 16)) & 0xffff;
+        gSum = (gSum + (gSum >> 16)) & 0xffff;
+        bSum = (bSum + (bSum >> 16)) & 0xffff;
         rgb_frame[y][x][0] = rSum;
         rgb_frame[y][x][1] = gSum;
         rgb_frame[y][x][2] = bSum;
      } // for x
   } // for y
 
-#ifdef OLD_WAY
+#else
   for (size_t i = 0; i < bytesPerFrame; i += 2) {
 
     // Convert from RGB565 to 24-bit RGB
@@ -115,7 +129,8 @@ void loop() {
     rgb_frame[block_y][block_x][2] += blue;
 
   }
-#endif // OLD_WAY
+
+#endif // NEW_WAY
 
   // Get normalization range (start at 1 because issues with lhs of image)
   for (int y = 0; y < HEIGHT / BLOCK_SIZE; y++) {
@@ -127,29 +142,34 @@ void loop() {
     }
   }
 
-  Serial.print("Image starts: ");
-  Serial.print(WIDTH / BLOCK_SIZE);
-  Serial.print(",");
-  Serial.print(HEIGHT / BLOCK_SIZE);
-  Serial.print(",");
-  Serial.println("RGB");
+timer = micros() - timer;
+Serial.print("Time to average pixels: ");
+Serial.println(timer);
+//delay(1000);
+
+//  Serial.print("Image starts: ");
+//  Serial.print(WIDTH / BLOCK_SIZE);
+//  Serial.print(",");
+//  Serial.print(HEIGHT / BLOCK_SIZE);
+//  Serial.print(",");
+//  Serial.println("RGB");
 
   int inputPtr = 0;
 
   // Output to serial viewer
   for (int y = 0; y < HEIGHT / BLOCK_SIZE; y++) {
     for (int x = 0; x < WIDTH / BLOCK_SIZE; x++) {
-      Serial.print("p ");
+//      Serial.print("p ");
       for (int c = 0; c < 3; c++) {
         int p = map(rgb_frame[y][x][c], col_min[0], col_max[0], 0, 360);
         if (p > 255) {
           p = 255;
         }
-        Serial.print(p);
+//        Serial.print(p);
         input[inputPtr++] = p;
-        Serial.print(",");
+//        Serial.print(",");
       }
-      Serial.println("");
+//      Serial.println("");
     }
   }
 
