@@ -92,7 +92,7 @@ timer = micros();
               uint16_t pixel = __builtin_bswap32(*pPixels++);
               // Use the lower and upper 16-bits to collect independent sums for each pixel pair
               rSum += ((pixel & 0xf800f800) >> 11);
-              gSum += ((pixel & 0x07e007e0) >> 6); // make RGB565 into RGB555
+              gSum += ((pixel & 0x07c007c0) >> 6); // make RGB565 into RGB555
               bSum += (pixel & 0x001f001f);
            } // for i
         } // for j
